@@ -1,0 +1,11 @@
+﻿// c:\program files (x86)\windows kits\10\include\10.0.22000.0\shared\d3dukmdt.h(547,9)
+namespace DirectN
+{
+    public enum _D3DDDI_DRIVERESCAPETYPE
+    {
+        D3DDDI_DRIVERESCAPETYPE_TRANSLATEALLOCATIONHANDLE = 0,
+        D3DDDI_DRIVERESCAPETYPE_TRANSLATERESOURCEHANDLE = 1,
+        D3DDDI_DRIVERESCAPETYPE_CPUEVENTUSAGE = 2,
+        D3DDDI_DRIVERESCAPETYPE_MAX = 3,
+    }
+}

@@ -1,0 +1,1 @@
+To compile project, you might need BlackMagic SDK / Library. You can get it from [here](https://www.blackmagicdesign.com/developer/product/capture-and-playback). Easiest way to obtain DeckLinkAPI is to install Desktop Video 12.3.

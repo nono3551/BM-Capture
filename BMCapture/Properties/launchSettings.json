@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "BMCapture (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "BMCapture (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+﻿// c:\program files (x86)\windows kits\10\include\10.0.22000.0\shared\dxgi1_6.h(403,1)
+using System;
+
+namespace DirectN
+{
+    [Flags]
+    public enum DXGI_HARDWARE_COMPOSITION_SUPPORT_FLAGS
+    {
+        DXGI_HARDWARE_COMPOSITION_SUPPORT_FLAG_FULLSCREEN = 0x00000001,
+        DXGI_HARDWARE_COMPOSITION_SUPPORT_FLAG_WINDOWED = 0x00000002,
+        DXGI_HARDWARE_COMPOSITION_SUPPORT_FLAG_CURSOR_STRETCHED = 0x00000004,
+    }
+}
