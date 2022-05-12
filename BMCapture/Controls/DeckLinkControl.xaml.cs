@@ -58,7 +58,10 @@ namespace BMCapture.OldWpf
             };
 
 
-            previewPanel = new SwapChainPanel();
+            previewPanel = new SwapChainPanel()
+            {
+                
+            };
 
             previewSurface = new SwapChainSurface(previewPanel, () => { }, OnSwapChainSurfaceInitialized);
 
@@ -193,8 +196,8 @@ namespace BMCapture.OldWpf
             }
 
             var viewport = new D3D11_VIEWPORT();
-            viewport.Width = previewSurface.PanelWidth / 2;
-            viewport.Height = previewSurface.PanelHeight / 2;
+            viewport.Width = previewSurface.PanelWidth;
+            viewport.Height = previewSurface.PanelHeight;
             viewport.TopLeftX = 0;
             viewport.TopLeftY = 0;
             viewport.MaxDepth = 1;

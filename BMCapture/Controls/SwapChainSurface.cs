@@ -19,8 +19,8 @@ public class SwapChainSurface : IDisposable
 
     private SwapChainPanel SwapChainPanel { get; }
 
-    public uint PanelWidth => Math.Max(1, (uint)Math.Ceiling(SwapChainPanel.ActualWidth * SwapChainPanel.CompositionScaleX));
-    public uint PanelHeight => Math.Max(1, (uint)Math.Ceiling(SwapChainPanel.ActualHeight * SwapChainPanel.CompositionScaleY));
+    public uint PanelWidth => Math.Max(1, (uint)Math.Ceiling(SwapChainPanel.ActualWidth));
+    public uint PanelHeight => Math.Max(1, (uint)Math.Ceiling(SwapChainPanel.ActualHeight));
 
     public SwapChainSurface(SwapChainPanel swapChainPanel, Action onResize, EventHandler<IComObject<ID3D11Device>?> onInitialized)
     {
@@ -152,7 +152,7 @@ public class SwapChainSurface : IDisposable
 
             updateSurface(device, context);
 
-            swapChainComObject.Present(1, 0).ThrowOnError();
+            swapChainComObject.Present(0, 0).ThrowOnError();
         }
         catch (ObjectDisposedException)
         {
