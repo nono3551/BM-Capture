@@ -1,6 +1,6 @@
 ﻿using DeckLinkAPI;
 
-namespace BMCapture.OldWpf.DeckLink
+namespace BMCapture.Core.DeckLink
 {
     class DeckLinkDeviceDiscovery : IDeckLinkDeviceNotificationCallback
     {

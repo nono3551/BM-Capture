@@ -1,24 +1,26 @@
 ﻿using DeckLinkAPI;
 using System;
 
-namespace BMCapture.OldWpf
+namespace BMCapture.Core
 {
     public class Bgra32VideoFrame : IDeckLinkVideoFrame
     {
         public int m_width;
         public int m_height;
+        public int m_row_bytes;
         private _BMDFrameFlags m_flags;
         public IntPtr m_pixelBuffer;
         public IntPtr m_unmanagedBuffer = IntPtr.Zero;
         private int m_pixelBufferBytes;
 
         // Constructor generates empty pixel buffer
-        public Bgra32VideoFrame(int width, int height, _BMDFrameFlags flags)
+        public Bgra32VideoFrame(int width, int height, _BMDFrameFlags flags, int rowBytes)
         {
             m_width = width;
             m_height = height;
             m_flags = flags;
             m_pixelBufferBytes = m_width * m_height * 4;
+            m_row_bytes = ((IDeckLinkVideoFrame) this).GetRowBytes();
 
             // Allocate pixel buffer from unmanaged memory
             m_unmanagedBuffer = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(m_pixelBufferBytes);
@@ -33,6 +35,7 @@ namespace BMCapture.OldWpf
             m_width = frame.GetWidth();
             m_height = frame.GetHeight();
             m_flags = frame.GetFlags();
+            m_row_bytes = ((IDeckLinkVideoFrame) this).GetRowBytes();
 
             frame.GetBytes(out m_pixelBuffer);
         }
@@ -110,7 +113,7 @@ namespace BMCapture.OldWpf
             }
             else
             {
-                dstFrame = new Bgra32VideoFrame(srcFrame.GetWidth(), srcFrame.GetHeight(), srcFrame.GetFlags());
+                dstFrame = new Bgra32VideoFrame(srcFrame.GetWidth(), srcFrame.GetHeight(), srcFrame.GetFlags(), srcFrame.GetRowBytes());
                 m_deckLinkConversion.ConvertFrame(srcFrame, dstFrame);
             }
             return dstFrame;

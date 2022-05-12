@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace BMCapture.OldWpf
+namespace BMCapture.Core
 {
     public static class MtaHelper
     {

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using BMCapture.OldWpf.DeckLink;
-using BMCapture.OldWpf.MediaFoundation;
+using BMCapture.Core.DeckLink;
+using BMCapture.Core.MediaFoundation;
 using DeckLinkAPI;
 using NAudio.Dmo;
 using NAudio.MediaFoundation;
 
-namespace BMCapture.OldWpf.Capturing;
+namespace BMCapture.Core.Capturing;
 
 public class CaptureManager
 {

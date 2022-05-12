@@ -3,7 +3,7 @@ using System.Collections;
 using DeckLinkAPI;
 using System.Collections.Generic;
 
-namespace BMCapture.OldWpf.DeckLink
+namespace BMCapture.Core.DeckLink
 {
     public class DisplayModeEnum : IEnumerator<IDeckLinkDisplayMode>, IEnumerable<IDeckLinkDisplayMode>
     {

@@ -14,7 +14,7 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 	<ItemGroup>
-	  <None Remove="OldWpf\DeckLinkControl.xaml" />
+	  <None Remove="Core\DeckLinkControl.xaml" />
 	</ItemGroup>
 	<ItemGroup>
 	  <COMReference Include="DeckLinkAPI">
@@ -53,10 +53,12 @@
 		<ProjectCapability Include="Msix" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Controls\MediaPlayer\" />
+	  <ProjectReference Include="..\DirectN\DirectN\DirectN.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\DirectN\DirectN\DirectN.csproj" />
+	  <None Update="shaders.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 	<ItemGroup>
 	  <Page Update="OldWpf\DeckLinkControl.xaml">

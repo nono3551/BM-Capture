@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using NAudio.MediaFoundation;
 
-namespace BMCapture.OldWpf.MediaFoundation;
+namespace BMCapture.Core.MediaFoundation;
 
 public static class MediaFoundationHelper
 {

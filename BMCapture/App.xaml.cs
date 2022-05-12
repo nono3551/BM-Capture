@@ -1,4 +1,6 @@
-﻿using Microsoft.UI.Xaml;
+﻿using System.IO;
+using System.Reflection;
+using Microsoft.UI.Xaml;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -26,6 +28,13 @@ namespace BMCapture
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
+            var currentDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location);
+
+            if (currentDirectory != null)
+            {
+                Directory.SetCurrentDirectory(currentDirectory);
+            }
+
             m_window = new MainWindow();
             m_window.Activate();
         }

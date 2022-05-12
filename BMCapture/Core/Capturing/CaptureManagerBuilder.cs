@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
-using BMCapture.OldWpf.DeckLink;
+using BMCapture.Core.DeckLink;
 using DeckLinkAPI;
 
-namespace BMCapture.OldWpf.Capturing;
+namespace BMCapture.Core.Capturing;
 
 public class CaptureManagerBuilder
 {

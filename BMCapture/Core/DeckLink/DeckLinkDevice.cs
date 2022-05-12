@@ -4,10 +4,10 @@ using System.Runtime.InteropServices;
 using System;
 using System.IO;
 using System.Linq;
-using BMCapture.OldWpf.Capturing;
 using NAudio.Wave;
+using BMCapture.Core.Capturing;
 
-namespace BMCapture.OldWpf.DeckLink;
+namespace BMCapture.Core.DeckLink;
 
 public class DeckLinkDevice : IDeckLinkInputCallback
 {

@@ -1,6 +1,6 @@
 ﻿using DeckLinkAPI;
 
-namespace BMCapture.OldWpf.DeckLink
+namespace BMCapture.Core.DeckLink
 {
     public delegate void DeckLinkInputSignalHandler(bool inputSignal);
     public delegate void DeckLinkFormatChangedHandler(IDeckLinkDisplayMode newDisplayMode);

@@ -2,26 +2,30 @@
 
 using System;
 using System.Runtime.InteropServices;
-using Windows.Graphics.DirectX.Direct3D11;
 using DirectN;
 using Microsoft.UI.Xaml.Controls;
 using WinRT;
 
-namespace BMCapture.Controls.MediaPlayer.Controls;
+namespace BMCapture.Controls;
 
-internal class SwapChainSurface : IDisposable
+public class SwapChainSurface : IDisposable
 {
     private bool rendering;
     private IComObject<IDXGISwapChain1>? swapChain;
     IDXGISwapChain1? swapChainComObject;
+    private IComObject<ID3D11RenderTargetView>? _renderTargetView;
+
+    public event EventHandler<IComObject<ID3D11Device>?> Initialized;
 
     private SwapChainPanel SwapChainPanel { get; }
 
-    private uint PanelWidth => Math.Max(1, (uint)Math.Ceiling(SwapChainPanel.ActualWidth * SwapChainPanel.CompositionScaleX));
-    private uint PanelHeight => Math.Max(1, (uint)Math.Ceiling(SwapChainPanel.ActualHeight * SwapChainPanel.CompositionScaleY));
+    public uint PanelWidth => Math.Max(1, (uint)Math.Ceiling(SwapChainPanel.ActualWidth * SwapChainPanel.CompositionScaleX));
+    public uint PanelHeight => Math.Max(1, (uint)Math.Ceiling(SwapChainPanel.ActualHeight * SwapChainPanel.CompositionScaleY));
 
-    public SwapChainSurface(SwapChainPanel swapChainPanel, Action onResize)
+    public SwapChainSurface(SwapChainPanel swapChainPanel, Action onResize, EventHandler<IComObject<ID3D11Device>?> onInitialized)
     {
+        Initialized += onInitialized;
+
         SwapChainPanel = swapChainPanel;
         Initialize();
 
@@ -55,10 +59,10 @@ internal class SwapChainSurface : IDisposable
     private void Initialize()
     {
         var featureLevels = new[] { D3D_FEATURE_LEVEL.D3D_FEATURE_LEVEL_11_0 };
-        var flags = D3D11_CREATE_DEVICE_FLAG.D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+        var flags = D3D11_CREATE_DEVICE_FLAG.D3D11_CREATE_DEVICE_BGRA_SUPPORT | D3D11_CREATE_DEVICE_FLAG.D3D11_CREATE_DEVICE_DEBUG;
 
         using IComObject<ID3D11Device>? d3dDevice = D3D11Functions.D3D11CreateDevice(null, D3D_DRIVER_TYPE.D3D_DRIVER_TYPE_HARDWARE, flags, featureLevels);
-        
+
         var swapChainDescription = new DXGI_SWAP_CHAIN_DESC1
         {
             Width = PanelWidth,
@@ -82,6 +86,8 @@ internal class SwapChainSurface : IDisposable
         swapChainComObject = swapChain!.Object;
 
         SetSwapChain(false);
+
+        Initialized?.Invoke(this, d3dDevice);
     }
 
     public void Dispose()
@@ -104,57 +110,7 @@ internal class SwapChainSurface : IDisposable
         Marshal.ReleaseComObject(nativePanel);
     }
 
-    public void OnNewSurfaceAvailable(Action<IDirect3DSurface> updateSurface)
-    {
-        if (rendering)
-        {
-#if DEBUG
-            System.Diagnostics.Debug.WriteLine("Warning: Still rendering the previous frame, so skipping this one", nameof(SwapChainSurface) + '.' + nameof(OnNewSurfaceAvailable));
-#endif
-            return;
-        }
-
-        try
-        {
-            if (this.swapChain is null || swapChainComObject is null)
-            {
-                return;
-            }
-            
-            swapChainComObject.GetDesc(out var desc).ThrowOnError();
-            
-            if (desc.BufferDesc.Width != PanelWidth || desc.BufferDesc.Height != PanelHeight)
-            {
-                swapChainComObject.ResizeBuffers(2, PanelWidth, PanelHeight, DXGI_FORMAT.DXGI_FORMAT_UNKNOWN, 0).ThrowOnError();
-            }
-
-            using var dxgiSurface = swapChainComObject.GetBuffer<IDXGISurface>(0);
-            var dxgiSurfacePtr = Marshal.GetComInterfaceForObject<IDXGISurface, IDXGISurface>(dxgiSurface.Object);
-                                                   
-            CreateDirect3D11SurfaceFromDXGISurface(dxgiSurfacePtr, out var graphicsSurface).ThrowOnError();
-            Marshal.Release(dxgiSurfacePtr);
-
-            using var d3DSurface = WinRT.MarshalInterface<IDirect3DSurface>.FromAbi(graphicsSurface)!;
-            
-            Marshal.Release(graphicsSurface);
-
-            updateSurface(d3DSurface);
-            
-            swapChainComObject.Present(1, 0).ThrowOnError();
-        }
-        catch (ObjectDisposedException)
-        {
-            Reinitialize();
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine("\nException: " + ex, nameof(SwapChainSurface) + '.' + nameof(OnNewSurfaceAvailable));
-        }
-
-        rendering = false;
-    }
-
-    public void OnNewSurfaceAvailable2(Action<ID3D11Device, ID3D11DeviceContext> updateSurface)
+    public void OnNewSurfaceAvailable(Action<ID3D11Device, ID3D11DeviceContext> updateSurface)
     {
         if (rendering)
         {
@@ -163,7 +119,7 @@ internal class SwapChainSurface : IDisposable
 
         try
         {
-            if (this.swapChain is null || swapChainComObject is null)
+            if (swapChain is null || swapChainComObject is null)
             {
                 return;
             }
@@ -172,14 +128,27 @@ internal class SwapChainSurface : IDisposable
 
             if (swapChainDesc.BufferDesc.Width != PanelWidth || swapChainDesc.BufferDesc.Height != PanelHeight)
             {
+                _renderTargetView?.Dispose();
                 swapChainComObject.ResizeBuffers(2, PanelWidth, PanelHeight, DXGI_FORMAT.DXGI_FORMAT_UNKNOWN, 0).ThrowOnError();
+                _renderTargetView = null;
             }
 
             var device = swapChain.Object.GetDevice1().Object.As<ID3D11Device>();
 
             device.GetImmediateContext(out var context);
 
-            // context.ClearRenderTargetView(renderTargetView.Object, new []{0f, 1f, 1f, 1f});
+
+            if (_renderTargetView == null)
+            {
+                var frameBuffer = swapChain.Object.GetBuffer<ID3D11Texture2D>(0);
+                _renderTargetView = device.CreateRenderTargetView(frameBuffer.Object);
+                frameBuffer.Dispose();
+            }
+
+            var backgroundColor = new float[] { 0x64 / 255.0f, 0x95 / 255.0f, 0xED / 255.0f, 1.0f };
+            context.ClearRenderTargetView(_renderTargetView.Object, backgroundColor);
+            context.OMSetRenderTargets(1, new ID3D11RenderTargetView[] { _renderTargetView.Object }, null);
+
 
             updateSurface(device, context);
 

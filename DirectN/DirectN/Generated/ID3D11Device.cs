@@ -119,7 +119,7 @@ namespace DirectN
         HRESULT GetDeviceRemovedReason();
         
         [PreserveSig]
-        void GetImmediateContext(/* [annotation] _Outptr_ */ out ID3D11DeviceContext ppImmediateContext);
+        HRESULT GetImmediateContext(/* [annotation] _Outptr_ */ out ID3D11DeviceContext ppImmediateContext);
         
         [PreserveSig]
         HRESULT SetExceptionMode(uint RaiseFlags);

@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
-using BMCapture.OldWpf.Capturing;
-using BMCapture.OldWpf.MediaFoundation;
+using BMCapture.Core.Capturing;
+using BMCapture.Core.MediaFoundation;
 using DeckLinkAPI;
 using NAudio.MediaFoundation;
 
-namespace BMCapture.OldWpf;
+namespace BMCapture.Core;
 
 public class SampleMemoryAllocator : IDeckLinkMemoryAllocator
 {
